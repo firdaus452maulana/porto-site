@@ -1,84 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github, Search } from 'lucide-react';
 import { Project } from '../types';
-
-const projects: Project[] = [
-  {
-    id: '1',
-    title: 'E-commerce Platform',
-    description: 'Built a scalable e-commerce platform handling 100k+ monthly users. Implemented real-time inventory management and payment processing.',
-    technologies: ['React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS'],
-    imageUrl: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: 'https://github.com',
-  },
-  {
-    id: '2',
-    title: 'AI-Powered Analytics Dashboard',
-    description: 'Developed a machine learning-based analytics platform for real-time business insights and predictive analysis.',
-    technologies: ['Python', 'TensorFlow', 'React', 'FastAPI', 'GCP'],
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: 'https://github.com',
-  },
-  {
-    id: '3',
-    title: 'Real-time Collaboration Tool',
-    description: 'Created a real-time collaboration platform with video conferencing and document sharing capabilities.',
-    technologies: ['WebRTC', 'Socket.io', 'React', 'Node.js', 'MongoDB'],
-    imageUrl: 'https://images.unsplash.com/photo-1600267175161-cfaa711b4a81?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: 'https://github.com',
-  },
-  {
-    id: '4',
-    title: 'Blockchain Supply Chain',
-    description: 'Implemented a blockchain-based supply chain tracking system for pharmaceutical companies.',
-    technologies: ['Solidity', 'Ethereum', 'React', 'Node.js', 'AWS'],
-    imageUrl: 'https://images.unsplash.com/photo-1621579943744-80a57a642438?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: 'https://github.com',
-  },
-  {
-    id: '5',
-    title: 'Acommerce Platform',
-    description: 'Built a scalable e-commerce platform handling 100k+ monthly users. Implemented real-time inventory management and payment processing.',
-    technologies: ['React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS'],
-    imageUrl: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: 'https://github.com',
-  },
-  {
-    id: '6',
-    title: 'AI-Powered Analytics Dashboard',
-    description: 'Developed a machine learning-based analytics platform for real-time business insights and predictive analysis.',
-    technologies: ['Python', 'TensorFlow', 'React', 'FastAPI', 'GCP'],
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: 'https://github.com',
-  },
-  {
-    id: '7',
-    title: 'Real-time Collaboration Tool',
-    description: 'Created a real-time collaboration platform with video conferencing and document sharing capabilities.',
-    technologies: ['WebRTC', 'Socket.io', 'React', 'Node.js', 'MongoDB'],
-    imageUrl: 'https://images.unsplash.com/photo-1600267175161-cfaa711b4a81?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: '',
-  },
-  {
-    id: '8',
-    title: 'Blockchain Supply Chain',
-    description: 'Implemented a blockchain-based supply chain tracking system for pharmaceutical companies.',
-    technologies: ['Solidity', 'Ethereum', 'React', 'Node.js', 'AWS'],
-    imageUrl: 'https://images.unsplash.com/photo-1621579943744-80a57a642438?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://demo.example.com',
-    githubUrl: 'https://github.com',
-  },
-];
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 const Portfolio = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    const q = query(collection(db, 'projects'));
+
+    const unsubscribe = onSnapshot(q,
+      (snapshot) => {
+        const projectsData = snapshot.docs.map(doc => {
+          const data = doc.data();       
+          return {
+            id: doc.id,
+            ...data
+          } as Project;
+        });
+        
+        setProjects(projectsData);
+        setLoading(false);
+      },
+      (err) => {
+        setError('Failed to load projects');
+        setLoading(false);
+        console.error('Firestore error:', err);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTech, setSelectedTech] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -144,15 +102,25 @@ const Portfolio = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {currentProjects.map((project) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-            >
+          {loading ? (
+            <div className="col-span-full text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading projects...</p>
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-8 text-red-600">
+              {error}
+            </div>
+          ) : (
+            currentProjects.map((project) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              >
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={project.imageUrl}
@@ -202,7 +170,7 @@ const Portfolio = () => {
                 </div>
               </div>
             </motion.div>
-          ))}
+          )))}
         </div>
 
         <div className="flex justify-center items-center mt-8 space-x-2 max-w-4xl mx-auto px-4">
