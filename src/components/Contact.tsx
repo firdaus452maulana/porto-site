@@ -40,8 +40,9 @@ const Contact = () => {
   };
 
   return (
-    <section className="py-20 bg-gray-50" id="contact">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-gradient-to-b from-blue-50 to-white" id="contact">
+      <div className="container mx-auto px-4 relative">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(#3b82f61a_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -70,21 +71,21 @@ const Contact = () => {
                   <Mail className="w-6 h-6 text-blue-600 mr-4" />
                   <div>
                     <h4 className="font-medium">Email</h4>
-                    <p className="text-gray-600">contact@example.com</p>
+                    <p className="text-gray-600">firdaus452maulana@gmail.com</p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <Phone className="w-6 h-6 text-blue-600 mr-4" />
                   <div>
                     <h4 className="font-medium">Phone</h4>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <p className="text-gray-600">(+81)70-1595-3006</p>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <MapPin className="w-6 h-6 text-blue-600 mr-4" />
                   <div>
                     <h4 className="font-medium">Location</h4>
-                    <p className="text-gray-600">San Francisco, CA</p>
+                    <p className="text-gray-600">Hino, Tokyo, Japan</p>
                   </div>
                 </div>
               </div>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
@@ -6,7 +5,7 @@ import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
 import Skills from './components/Skills';
 import Experience from './components/Experience';
-import Blog from './components/Blog';
+// import Blog from './components/Blog';
 import Contact from './components/Contact';
 import AdminLogin from './components/AdminLogin';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -26,7 +25,7 @@ function App() {
                   <Portfolio />
                   <Skills />
                   <Experience />
-                  <Blog />
+                  {/* <Blog /> */}
                   <Contact />
                 </>
               } />
