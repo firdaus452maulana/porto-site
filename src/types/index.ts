@@ -4,9 +4,8 @@ export interface Project {
   description: string;
   technologies: string[];
   imageUrl: string;
-  demoUrl: string;
-  githubUrl: string;
-  metrics: string[];
+  demoUrl?: string;
+  githubUrl?: string;
 }
 
 export interface BlogPost {
@@ -31,6 +30,6 @@ export interface WorkExperience {
 
 export interface Skill {
   name: string;
-  category: 'frontend' | 'backend' | 'devops';
+  category: string;
   proficiency: number;
 }

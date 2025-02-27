@@ -12,7 +12,6 @@ const projects: Project[] = [
     imageUrl: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://demo.example.com',
     githubUrl: 'https://github.com',
-    metrics: ['99.9% uptime', '50% faster load times', '30% increase in sales']
   },
   {
     id: '2',
@@ -22,7 +21,6 @@ const projects: Project[] = [
     imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://demo.example.com',
     githubUrl: 'https://github.com',
-    metrics: ['90% prediction accuracy', '2M+ data points processed', '5x faster analysis']
   },
   {
     id: '3',
@@ -32,7 +30,6 @@ const projects: Project[] = [
     imageUrl: 'https://images.unsplash.com/photo-1600267175161-cfaa711b4a81?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://demo.example.com',
     githubUrl: 'https://github.com',
-    metrics: ['10k+ daily active users', '<100ms latency', '4.8/5 user rating']
   },
   {
     id: '4',
@@ -42,13 +39,50 @@ const projects: Project[] = [
     imageUrl: 'https://images.unsplash.com/photo-1621579943744-80a57a642438?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://demo.example.com',
     githubUrl: 'https://github.com',
-    metrics: ['100% traceability', '45% cost reduction', '3M+ transactions']
-  }
+  },
+  {
+    id: '5',
+    title: 'Acommerce Platform',
+    description: 'Built a scalable e-commerce platform handling 100k+ monthly users. Implemented real-time inventory management and payment processing.',
+    technologies: ['React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS'],
+    imageUrl: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80',
+    demoUrl: 'https://demo.example.com',
+    githubUrl: 'https://github.com',
+  },
+  {
+    id: '6',
+    title: 'AI-Powered Analytics Dashboard',
+    description: 'Developed a machine learning-based analytics platform for real-time business insights and predictive analysis.',
+    technologies: ['Python', 'TensorFlow', 'React', 'FastAPI', 'GCP'],
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    demoUrl: 'https://demo.example.com',
+    githubUrl: 'https://github.com',
+  },
+  {
+    id: '7',
+    title: 'Real-time Collaboration Tool',
+    description: 'Created a real-time collaboration platform with video conferencing and document sharing capabilities.',
+    technologies: ['WebRTC', 'Socket.io', 'React', 'Node.js', 'MongoDB'],
+    imageUrl: 'https://images.unsplash.com/photo-1600267175161-cfaa711b4a81?auto=format&fit=crop&w=800&q=80',
+    demoUrl: 'https://demo.example.com',
+    githubUrl: '',
+  },
+  {
+    id: '8',
+    title: 'Blockchain Supply Chain',
+    description: 'Implemented a blockchain-based supply chain tracking system for pharmaceutical companies.',
+    technologies: ['Solidity', 'Ethereum', 'React', 'Node.js', 'AWS'],
+    imageUrl: 'https://images.unsplash.com/photo-1621579943744-80a57a642438?auto=format&fit=crop&w=800&q=80',
+    demoUrl: 'https://demo.example.com',
+    githubUrl: 'https://github.com',
+  },
 ];
 
 const Portfolio = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTech, setSelectedTech] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 4;
 
   const allTechnologies = Array.from(
     new Set(projects.flatMap(project => project.technologies))
@@ -60,6 +94,14 @@ const Portfolio = () => {
     const matchesTech = !selectedTech || project.technologies.includes(selectedTech);
     return matchesSearch && matchesTech;
   });
+
+  // Get current projects
+  const indexOfLastProject = currentPage * projectsPerPage;
+  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+  const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <section className="py-20 bg-gray-50" id="portfolio">
@@ -102,7 +144,7 @@ const Portfolio = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {filteredProjects.map((project) => (
+          {currentProjects.map((project) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: 20 }}
@@ -122,14 +164,6 @@ const Portfolio = () => {
                 <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
                 <p className="text-gray-600 mb-4">{project.description}</p>
                 
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Key Metrics:</h4>
-                  <ul className="list-disc list-inside text-sm text-gray-600">
-                    {project.metrics.map((metric, index) => (
-                      <li key={index}>{metric}</li>
-                    ))}
-                  </ul>
-                </div>
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {project.technologies.map((tech) => (
@@ -143,28 +177,81 @@ const Portfolio = () => {
                 </div>
 
                 <div className="flex justify-end space-x-4">
-                  <a
-                    href={project.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:text-blue-800"
-                  >
-                    <ExternalLink size={18} className="mr-1" />
-                    Demo
-                  </a>
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-gray-700 hover:text-gray-900"
-                  >
-                    <Github size={18} className="mr-1" />
-                    Code
-                  </a>
+                  {project.demoUrl && (
+                    <a
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-blue-600 hover:text-blue-800"
+                    >
+                      <ExternalLink size={18} className="mr-1" />
+                      Demo
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-gray-700 hover:text-gray-900"
+                    >
+                      <Github size={18} className="mr-1" />
+                      Code
+                    </a>
+                  )}
                 </div>
               </div>
             </motion.div>
           ))}
+        </div>
+
+        <div className="flex justify-center items-center mt-8 space-x-2 max-w-4xl mx-auto px-4">
+          <div className="flex-grow flex justify-center space-x-2">
+            <button
+              onClick={() => paginate(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &lt;
+            </button>
+
+            {Array.from({ length: Math.ceil(filteredProjects.length / projectsPerPage) }).map((_, index) => {
+              const page = index + 1;
+              const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
+              
+              // Show first page, last page, current page and 1 page before/after current
+              if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                return (
+                  <button
+                    key={page}
+                    onClick={() => paginate(page)}
+                    className={`px-4 py-2 rounded-lg ${
+                      currentPage === page
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              }
+
+              // Show ellipsis between gaps
+              if (page === currentPage - 2 || page === currentPage + 2) {
+                return <span key={page} className="px-2">...</span>;
+              }
+
+              return null;
+            })}
+
+            <button
+              onClick={() => paginate(Math.min(Math.ceil(filteredProjects.length / projectsPerPage), currentPage + 1))}
+              disabled={currentPage === Math.ceil(filteredProjects.length / projectsPerPage)}
+              className="px-3 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &gt;
+            </button>
+          </div>
         </div>
       </div>
     </section>

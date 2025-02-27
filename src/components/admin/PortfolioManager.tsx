@@ -16,7 +16,6 @@ const PortfolioManager = () => {
     technologies: '',
     demoUrl: '',
     githubUrl: '',
-    metrics: '',
     imageFile: null as File | null,
     imageUrl: ''
   });
@@ -61,9 +60,8 @@ const PortfolioManager = () => {
         title: formData.title,
         description: formData.description,
         technologies: formData.technologies.split(',').map(tech => tech.trim()),
-        demoUrl: formData.demoUrl,
-        githubUrl: formData.githubUrl,
-        metrics: formData.metrics.split('\n').map(metric => metric.trim()),
+        demoUrl: formData.demoUrl || '',
+        githubUrl: formData.githubUrl || '',
         imageUrl
       };
 
@@ -79,7 +77,6 @@ const PortfolioManager = () => {
         technologies: '',
         demoUrl: '',
         githubUrl: '',
-        metrics: '',
         imageFile: null,
         imageUrl: ''
       });
@@ -100,9 +97,8 @@ const PortfolioManager = () => {
       title: project.title,
       description: project.description,
       technologies: project.technologies.join(', '),
-      demoUrl: project.demoUrl,
-      githubUrl: project.githubUrl,
-      metrics: project.metrics.join('\n'),
+      demoUrl: project.demoUrl || '',
+      githubUrl: project.githubUrl || '',
       imageFile: null,
       imageUrl: project.imageUrl
     });
@@ -192,7 +188,6 @@ const PortfolioManager = () => {
                 value={formData.demoUrl}
                 onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
               />
             </div>
 
@@ -203,21 +198,9 @@ const PortfolioManager = () => {
                 value={formData.githubUrl}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Key Metrics (one per line)</label>
-              <textarea
-                value={formData.metrics}
-                onChange={(e) => setFormData({ ...formData, metrics: e.target.value })}
-                rows={3}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-                placeholder="e.g.&#10;99.9% uptime&#10;50% faster load times&#10;30% increase in sales"
-              />
-            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Project Image</label>
@@ -241,7 +224,6 @@ const PortfolioManager = () => {
                     technologies: '',
                     demoUrl: '',
                     githubUrl: '',
-                    metrics: '',
                     imageFile: null,
                     imageUrl: ''
                   });
@@ -301,14 +283,6 @@ const PortfolioManager = () => {
 
             <p className="text-gray-600 mb-4">{project.description}</p>
 
-            <div className="mb-4">
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">Key Metrics:</h4>
-              <ul className="list-disc list-inside text-sm text-gray-600">
-                {project.metrics.map((metric, index) => (
-                  <li key={index}>{metric}</li>
-                ))}
-              </ul>
-            </div>
 
             <div className="flex flex-wrap gap-2 mb-4">
               {project.technologies.map((tech) => (
