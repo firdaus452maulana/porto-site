@@ -6,12 +6,16 @@ import {
   Briefcase,
   Code2,
   LogOut,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  User,
+  Contact
 } from 'lucide-react';
 import BlogManager from './admin/BlogManager';
 import PortfolioManager from './admin/PortfolioManager';
 import ExperienceManager from './admin/ExperienceManager';
 import DashboardOverview from './admin/DashboardOverview';
+import ProfileManager from './admin/ProfileManager';
+import ContactManager from './admin/ContactManager';
 
 const SettingsPanel = () => (
   <div>
@@ -70,6 +74,20 @@ const AdminDashboard = () => {
             Experience
           </Link>
           <Link
+            to="/admin/profile"
+            className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100"
+          >
+            <User className="h-5 w-5 mr-3" />
+            Profile Section
+          </Link>
+          <Link
+            to="/admin/contact"
+            className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100"
+          >
+            <Contact className="h-5 w-5 mr-3" />
+            Contact Info
+          </Link>
+          <Link
             to="/admin/settings"
             className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100"
           >
@@ -94,6 +112,8 @@ const AdminDashboard = () => {
             <Route path="blog/*" element={<BlogManager />} />
             <Route path="portfolio/*" element={<PortfolioManager />} />
             <Route path="experience/*" element={<ExperienceManager />} />
+            <Route path="profile" element={<ProfileManager />} />
+            <Route path="contact" element={<ContactManager />} />
             <Route path="settings" element={<SettingsPanel />} />
           </Routes>
         </div>

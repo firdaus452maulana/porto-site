@@ -33,3 +33,21 @@ export interface Skill {
   category: string;
   proficiency: number;
 }
+
+export interface ContactInfo {
+  email: string;
+  phone: string;
+  location: string;
+  socialMedia: {
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+  };
+}
+
+export interface ProfileData {
+  name: string;
+  jobTitle: string;
+  introduction: string;
+  photoURL: string;
+}

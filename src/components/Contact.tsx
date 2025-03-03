@@ -1,10 +1,22 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Send, Mail, Phone, MapPin } from 'lucide-react';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+
+interface ContactInfo {
+  email: string;
+  phone: string;
+  location: string;
+  socialMedia: {
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+  };
+}
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -16,6 +28,33 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 const Contact = () => {
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    email: '',
+    phone: '',
+    location: '',
+    socialMedia: {}
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const docRef = doc(db, 'contactInfo', 'main');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setContactInfo(docSnap.data() as ContactInfo);
+        }
+      } catch (err) {
+        setError('Failed to load contact information');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -58,41 +97,7 @@ const Contact = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <Mail className="w-6 h-6 text-blue-600 mr-4" />
-                  <div>
-                    <h4 className="font-medium">Email</h4>
-                    <p className="text-gray-600">firdaus452maulana@gmail.com</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <Phone className="w-6 h-6 text-blue-600 mr-4" />
-                  <div>
-                    <h4 className="font-medium">Phone</h4>
-                    <p className="text-gray-600">(+81)70-1595-3006</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <MapPin className="w-6 h-6 text-blue-600 mr-4" />
-                  <div>
-                    <h4 className="font-medium">Location</h4>
-                    <p className="text-gray-600">Hino, Tokyo, Japan</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
+        <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
@@ -207,6 +212,40 @@ const Contact = () => {
                 </button>
               </div>
             </form>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <Mail className="w-6 h-6 text-blue-600 mr-4" />
+                  <div>
+                    <h4 className="font-medium">Email</h4>
+                    <p className="text-gray-600">{contactInfo.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <Phone className="w-6 h-6 text-blue-600 mr-4" />
+                  <div>
+                    <h4 className="font-medium">Phone</h4>
+                    <p className="text-gray-600">{contactInfo.phone}</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <MapPin className="w-6 h-6 text-blue-600 mr-4" />
+                  <div>
+                    <h4 className="font-medium">Location</h4>
+                    <p className="text-gray-600">{contactInfo.location}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
