@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { AdvancedImage } from '@cloudinary/react';
+import { scale } from '@cloudinary/url-gen/actions/resize';
+import { lazyload } from '@cloudinary/react';
+import cld from '../lib/cloudinary';
 import { ExternalLink, Github, Search } from 'lucide-react';
 import { Project } from '../types';
 import { collection, onSnapshot, query } from 'firebase/firestore';
@@ -122,10 +126,14 @@ const Portfolio = () => {
                 className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
               >
               <div className="relative h-48 overflow-hidden">
-                <img
-                  src={project.imageUrl}
-                  alt={project.title}
+                <AdvancedImage
+                  cldImg={cld.image(project.imageUrl)
+                    .resize(scale().width(800).height(600))
+                    .quality('auto')
+                    .format('auto')}
+                  plugins={[lazyload()]}
                   className="w-full h-full object-cover"
+                  alt={project.title}
                 />
               </div>
               <div className="p-6">

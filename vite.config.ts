@@ -7,4 +7,15 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  define: {
+    'process.env': {}
+  },
+  server: {
+    proxy: {
+      '/v1_1': {
+        target: 'https://api.cloudinary.com',
+        changeOrigin: true,
+      },
+    },
+  },
 });

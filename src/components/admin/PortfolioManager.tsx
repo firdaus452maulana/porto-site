@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { db, storage } from '../../lib/firebase';
+import axios from 'axios';
+import { db } from '../../lib/firebase';
 import { Project } from '../../types';
 import { PlusCircle, Edit2, Trash2, Loader, ExternalLink, Github } from 'lucide-react';
+import { deleteCloudinaryImage } from '../../lib/cloudinary';
 
 const PortfolioManager = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -41,9 +42,25 @@ const PortfolioManager = () => {
   };
 
   const handleImageUpload = async (file: File) => {
-    const storageRef = ref(storage, `project-images/${file.name}`);
-    await uploadBytes(storageRef, file);
-    return getDownloadURL(storageRef);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data.secure_url;
+    } catch (error) {
+      console.error('Cloudinary upload error:', error);
+      throw new Error('Failed to upload image');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,11 +126,12 @@ const PortfolioManager = () => {
 
     setLoading(true);
     try {
-      await deleteDoc(doc(db, 'projects', project.id));
       if (project.imageUrl) {
-        const imageRef = ref(storage, project.imageUrl);
-        await deleteObject(imageRef);
+        // Extract public_id from Cloudinary URL
+        const publicId = project.imageUrl.split('/').slice(-1)[0].split('.')[0];
+        await deleteCloudinaryImage(publicId);
       }
+      await deleteDoc(doc(db, 'projects', project.id));
       await fetchProjects();
     } catch (error) {
       console.error('Error deleting project:', error);
