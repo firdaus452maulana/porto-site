@@ -1,5 +1,6 @@
 import { Cloudinary } from '@cloudinary/url-gen';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 const cld = new Cloudinary({
   cloud: {
