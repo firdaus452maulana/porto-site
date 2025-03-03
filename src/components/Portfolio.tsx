@@ -126,14 +126,10 @@ const Portfolio = () => {
                 className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
               >
               <div className="relative h-48 overflow-hidden">
-                <AdvancedImage
-                  cldImg={cld.image(project.imageUrl)
-                    .resize(scale().width(800).height(600))
-                    .quality('auto')
-                    .format('auto')}
-                  plugins={[lazyload()]}
-                  className="w-full h-full object-cover"
+                <img
+                  src={project.imageUrl}
                   alt={project.title}
+                  className="w-full h-48 object-cover rounded-lg"
                 />
               </div>
               <div className="p-6">
