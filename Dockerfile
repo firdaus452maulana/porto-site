@@ -1,20 +1,14 @@
-# Stage 1: Build application
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm i
 COPY . .
-RUN npm run build
+RUN npm install -g serve
 
-# Stage 2: Production server
-FROM nginx:1.25-alpine
-RUN apk add --no-cache bash
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -u 1001 -S -G nodejs nodejs
+EXPOSE 5173
 
-COPY --from=builder --chown=nodejs:nodejs /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-USER nodejs
-EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+CMD sh -c "if [ \"$NODE_ENV\" = 'production' ]; then \
+  npm run build && serve -s dist -l 5173; \
+else \
+  npm run dev; \
+fi"

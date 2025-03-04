@@ -1,16 +1,21 @@
 version: '3.8'
 
 services:
-  app-dev:
+  app:
     build: .
-    command: npm run dev
+    command: >
+      sh -c "if [ \"$NODE_ENV\" = 'production' ]; then
+        npm run build && serve -s dist -l 5173;
+      else
+        npm run dev;
+      fi"
     volumes:
       - .:/app
       - /app/node_modules
     ports:
-      - 5173:5173
+      - "5173:5173"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-development}
     networks:
       - porto-network
     healthcheck:
@@ -18,15 +23,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-  app-prod:
-    build: .
-    ports:
-      - 8080:8080
-    environment:
-      - NODE_ENV=production
-    networks:
-      - porto-network
 
 networks:
   porto-network:
