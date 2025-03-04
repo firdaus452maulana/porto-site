@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app-dev:
+    build: .
+    command: npm run dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 5173:5173
+    environment:
+      - NODE_ENV=development
+    networks:
+      - porto-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  app-prod:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - NODE_ENV=production
+    networks:
+      - porto-network
+
+networks:
+  porto-network:
+    driver: bridge
