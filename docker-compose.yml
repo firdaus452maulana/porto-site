@@ -5,7 +5,7 @@ services:
     build: .
     command: >
       sh -c "if [ \"$NODE_ENV\" = 'production' ]; then
-        npm run build && serve -s dist -l 5173;
+        npm run build && serve -s dist -l 4502;
       else
         npm run dev;
       fi"
@@ -13,13 +13,13 @@ services:
       - .:/app
       - /app/node_modules/
     ports:
-      - "5173:5173"
+      - "4502:4502"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
     networks:
       - porto-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      test: ["CMD", "curl", "-f", "http://localhost:4502"]
       interval: 30s
       timeout: 10s
       retries: 3

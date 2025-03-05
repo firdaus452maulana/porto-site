@@ -6,10 +6,10 @@ COPY . .
 RUN npm install -g vite
 RUN npm install -g serve
 
-EXPOSE 5173
+EXPOSE 4502
 
 CMD sh -c "if [ \"$NODE_ENV\" = 'production' ]; then \
-  npm run build && serve -s dist -l 5173; \
+  npm run build && serve -s dist -l 4502; \
 else \
   npm run dev; \
 fi"
