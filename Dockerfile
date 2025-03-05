@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm i
 COPY . .
+RUN npm install -g vite
 RUN npm install -g serve
 
 EXPOSE 5173
