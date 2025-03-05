@@ -1,15 +1,17 @@
 FROM node:18-alpine
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm i
+
+COPY package.json .
+
+RUN npm install
+
+RUN npm i -g serve
+
 COPY . .
-RUN npm install -g vite
-RUN npm install -g serve
 
-EXPOSE 4502
+RUN npm run build
 
-CMD sh -c "if [ \"$NODE_ENV\" = 'production' ]; then \
-  npm run build && serve -s dist -l 4502; \
-else \
-  npm run dev; \
-fi"
+EXPOSE 5173
+
+CMD [ "serve", "-s", "dist" ]
