@@ -16,6 +16,7 @@ import ExperienceManager from './admin/ExperienceManager';
 import DashboardOverview from './admin/DashboardOverview';
 import ProfileManager from './admin/ProfileManager';
 import ContactManager from './admin/ContactManager';
+import SkillsManager from './admin/SkillsManager';
 
 const SettingsPanel = () => (
   <div>
@@ -88,6 +89,13 @@ const AdminDashboard = () => {
             Contact Info
           </Link>
           <Link
+            to="/admin/skills"
+            className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100"
+          >
+            <Code2 className="h-5 w-5 mr-3" />
+            Skills
+          </Link>
+          <Link
             to="/admin/settings"
             className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100"
           >
@@ -114,6 +122,7 @@ const AdminDashboard = () => {
             <Route path="experience/*" element={<ExperienceManager />} />
             <Route path="profile" element={<ProfileManager />} />
             <Route path="contact" element={<ContactManager />} />
+            <Route path="skills" element={<SkillsManager />} />
             <Route path="settings" element={<SettingsPanel />} />
           </Routes>
         </div>

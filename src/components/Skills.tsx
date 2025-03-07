@@ -1,69 +1,52 @@
 import { motion } from 'framer-motion';
 import { Skill } from '../types';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
-// Moved skills data to a separate constant for better maintainability
-const skills: Skill[] = [
-  // Frontend
-  { name: 'Node.js', category: 'frontend', proficiency: 90 },
-  { name: 'Python', category: 'frontend', proficiency: 85 },
-  { name: 'PostgreSQL', category: 'frontend', proficiency: 85 },
+const skillsCollection = collection(db, 'skills');
 
-  // Backend
-  { name: 'Node.js', category: 'backend', proficiency: 90 },
-  { name: 'Python', category: 'backend', proficiency: 85 },
-  { name: 'PostgreSQL', category: 'backend', proficiency: 85 },
-  { name: 'MongoDB', category: 'backend', proficiency: 80 },
-  { name: 'GraphQL', category: 'backend', proficiency: 75 },
-  { name: 'Redis', category: 'backend', proficiency: 70 },
-
-  // DevOps
-  { name: 'Docker', category: 'devops', proficiency: 85 },
-  { name: 'Kubernetes', category: 'devops', proficiency: 75 },
-  { name: 'AWS', category: 'devops', proficiency: 80 },
-  { name: 'CI/CD', category: 'devops', proficiency: 85 },
-  { name: 'Terraform', category: 'devops', proficiency: 70 },
-  { name: 'Monitoring', category: 'devops', proficiency: 75 }
-];
-
-// Extracted SkillBar to its own component for better reusability
-interface SkillBarProps {
-  name: string;
-  proficiency: number;
-}
-
-const SkillBar = ({ name, proficiency }: SkillBarProps) => {
-  if (proficiency < 0 || proficiency > 100) {
-    console.error(`Invalid proficiency value for ${name}: ${proficiency}`);
-    return null;
-  }
-
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium text-gray-700">{name}</span>
-        <span className="text-sm text-gray-600">{proficiency}%</span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
-        <motion.div
-          className="bg-blue-600 h-2.5 rounded-full"
-          initial={{ width: 0 }}
-          whileInView={{ width: `${proficiency}%` }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          viewport={{ once: true }}
-        />
-      </div>
-    </div>
-  );
-};
+// Skill item display component
+const SkillItem = ({ name }: { name: string }) => (
+  <motion.div
+    initial={{ opacity: 0, x: -10 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.3 }}
+    className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm mb-2 mr-2"
+  >
+    {name}
+  </motion.div>
+);
 
 // Main Skills component
 const Skills = () => {
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch skills from Firestore
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const querySnapshot = await getDocs(skillsCollection);
+        const skillsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }) as Skill);
+        setSkills(skillsData);
+      } catch (error) {
+        console.error('Error fetching skills:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
   // Memoized categories to prevent unnecessary re-renders
   const categories = useMemo(() => ({
-    frontend: 'Frontend Development',
     backend: 'Backend Development',
-    devops: 'DevOps & Infrastructure'
+    genAi: 'Artificial Intelligence Development'
   }), []);
 
   // Calculate grid columns based on number of categories
@@ -84,8 +67,12 @@ const Skills = () => {
     }, {} as Record<string, Skill[]>);
   }, [categories]);
 
-  if (Object.keys(categories).length === 0) {
-    return <div className="text-center py-20">No skills categories available</div>;
+  if (loading) {
+    return <div className="text-center py-20">Loading skills...</div>;
+  }
+
+  if (skills.length === 0) {
+    return <div className="text-center py-20">No skills available</div>;
   }
 
   return (
@@ -128,12 +115,11 @@ const Skills = () => {
                 <h3 className="text-xl font-bold mb-6 text-gray-800">
                   {title}
                 </h3>
-                <div>
+                <div className="flex flex-wrap">
                   {skills.map((skill) => (
-                    <SkillBar
+                    <SkillItem
                       key={skill.name}
                       name={skill.name}
-                      proficiency={skill.proficiency}
                     />
                   ))}
                 </div>

@@ -29,9 +29,9 @@ export interface WorkExperience {
 }
 
 export interface Skill {
+  id?: string;
   name: string;
   category: string;
-  proficiency: number;
 }
 
 export interface ContactInfo {
