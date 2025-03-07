@@ -314,24 +314,28 @@ const PortfolioManager = () => {
             </div>
 
             <div className="flex justify-end space-x-4">
-              <a
-                href={project.demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-blue-600 hover:text-blue-800"
-              >
-                <ExternalLink size={18} className="mr-1" />
-                Demo
-              </a>
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-gray-700 hover:text-gray-900"
-              >
-                <Github size={18} className="mr-1" />
-                Code
-              </a>
+              {project.demoUrl && (
+                <a
+                  href={project.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-blue-600 hover:text-blue-800"
+                >
+                  <ExternalLink size={18} className="mr-1" />
+                  Demo
+                </a>
+              )}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-gray-700 hover:text-gray-900"
+                >
+                  <Github size={18} className="mr-1" />
+                  Code
+                </a>
+              )}
             </div>
           </div>
         ))}
