@@ -45,6 +45,7 @@ const Skills = () => {
 
   // Memoized categories to prevent unnecessary re-renders
   const categories = useMemo(() => ({
+    programming: 'Programming Languages',
     backend: 'Backend Development',
     genAi: 'Artificial Intelligence Development'
   }), []);
@@ -65,7 +66,7 @@ const Skills = () => {
       acc[category] = skills.filter(skill => skill.category === category);
       return acc;
     }, {} as Record<string, Skill[]>);
-  }, [categories]);
+  }, [skills, categories]);
 
   if (loading) {
     return <div className="text-center py-20">Loading skills...</div>;
@@ -95,15 +96,11 @@ const Skills = () => {
         <div 
           className={`grid grid-cols-${gridColumns.base} md:grid-cols-${gridColumns.md} lg:grid-cols-${gridColumns.lg} gap-8`}
         >
-          {Object.entries(categories).map(([category, title]) => {
-            const skills = skillsByCategory[category];
-            
-            if (!skills || skills.length === 0) {
-              console.warn(`No skills found for category: ${category}`);
-              return null;
-            }
-
-            return (
+          {Object.entries(categories)
+            .filter(([category]) => skillsByCategory[category]?.length > 0)
+            .map(([category, title]) => {
+              const skills = skillsByCategory[category];
+              return (
               <motion.div
                 key={category}
                 initial={{ opacity: 0, y: 20 }}

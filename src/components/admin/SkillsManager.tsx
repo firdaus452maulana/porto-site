@@ -99,6 +99,7 @@ const SkillsManager = () => {
             className="p-2 border rounded"
           >
             <option value="">Select Category</option>
+            <option value="programming">Programming</option>
             <option value="backend">Backend</option>
             <option value="genAi">Generative AI</option>
           </select>
