@@ -49,7 +49,7 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-8">
             <a href="#portfolio" className="text-gray-600 hover:text-gray-900">Portfolio</a>
             <a href="#experience" className="text-gray-600 hover:text-gray-900">Experience</a>
-            <a href="#blog" className="text-gray-600 hover:text-gray-900">Blog</a>
+            {/* <a href="#blog" className="text-gray-600 hover:text-gray-900">Blog</a> */}
             <a href="#contact" className="text-gray-600 hover:text-gray-900">Contact</a>
           </div>
 
@@ -98,13 +98,13 @@ const Header = () => {
               >
                 Experience
               </a>
-              <a
+              {/* <a
                 href="#blog"
                 className="block px-3 py-2 text-gray-600 hover:text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Blog
-              </a>
+              </a> */}
               <a
                 href="#contact"
                 className="block px-3 py-2 text-gray-600 hover:text-gray-900"

@@ -16,11 +16,11 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="min-h-screen bg-gray-50">
-          <Header />
           <main>
             <Routes>
               <Route path="/" element={
                 <>
+                  <Header />
                   <Hero />
                   <Portfolio />
                   <Skills />
