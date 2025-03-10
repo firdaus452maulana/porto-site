@@ -1,52 +1,43 @@
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { WorkExperience } from '../types';
-
-const experiences: WorkExperience[] = [
-  {
-    id: '1',
-    company: 'Tech Innovators Inc.',
-    position: 'Senior Software Engineer',
-    startDate: '2021',
-    endDate: 'Present',
-    description: [
-      'Led a team of 5 engineers in developing a microservices-based e-commerce platform',
-      'Improved system performance by 40% through optimization and caching strategies',
-      'Implemented CI/CD pipelines reducing deployment time by 60%',
-      'Mentored junior developers and conducted technical interviews'
-    ],
-    technologies: ['React', 'Node.js', 'PostgreSQL', 'AWS', 'Docker']
-  },
-  {
-    id: '2',
-    company: 'Digital Solutions Ltd.',
-    position: 'Full Stack Developer',
-    startDate: '2019',
-    endDate: '2021',
-    description: [
-      'Developed and maintained multiple client-facing web applications',
-      'Integrated third-party APIs and payment gateways',
-      'Reduced loading times by 50% through code optimization',
-      'Collaborated with design team to implement responsive UI/UX'
-    ],
-    technologies: ['Vue.js', 'Python', 'Django', 'MongoDB', 'GCP']
-  },
-  {
-    id: '3',
-    company: 'StartUp Ventures',
-    position: 'Software Developer',
-    startDate: '2017',
-    endDate: '2019',
-    description: [
-      'Built MVP for a social media analytics platform',
-      'Implemented real-time data processing pipeline',
-      'Developed RESTful APIs and WebSocket integrations',
-      'Participated in agile development processes'
-    ],
-    technologies: ['Angular', 'Express.js', 'Redis', 'Azure', 'Kubernetes']
-  }
-];
+import { db } from '../lib/firebase';
+import { collection, getDocs, query } from 'firebase/firestore';
 
 const Experience = () => {
+  const [experiences, setExperiences] = useState<WorkExperience[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        const q = query(collection(db, 'experiences'));
+        const querySnapshot = await getDocs(q);
+        const experiencesData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as WorkExperience[];
+        setExperiences(experiencesData);
+      } catch (error) {
+        console.error('Error fetching experiences:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 text-center">
+          <p>Loading experiences...</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 bg-gray-50" id="experience">
       <div className="container mx-auto px-4">
