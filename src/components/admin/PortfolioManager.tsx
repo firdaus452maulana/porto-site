@@ -17,6 +17,9 @@ const PortfolioManager = () => {
     technologies: '',
     demoUrl: '',
     githubUrl: '',
+    startDate: '',
+    finishDate: '',
+    isPresent: false,
     imageFile: null as File | null,
     imageUrl: ''
   });
@@ -27,7 +30,7 @@ const PortfolioManager = () => {
 
   const fetchProjects = async () => {
     try {
-      const q = query(collection(db, 'projects'), orderBy('title'));
+      const q = query(collection(db, 'projects'), orderBy('isPresent', 'desc'), orderBy('finishDate', 'desc'));
       const querySnapshot = await getDocs(q);
       const fetchedProjects = querySnapshot.docs.map(doc => ({
         id: doc.id,
@@ -77,6 +80,9 @@ const PortfolioManager = () => {
         title: formData.title,
         description: formData.description,
         technologies: formData.technologies.split(',').map(tech => tech.trim()),
+        startDate: formData.startDate,
+        finishDate: formData.finishDate,
+        isPresent: formData.isPresent,
         demoUrl: formData.demoUrl || '',
         githubUrl: formData.githubUrl || '',
         imageUrl
@@ -94,6 +100,9 @@ const PortfolioManager = () => {
         technologies: '',
         demoUrl: '',
         githubUrl: '',
+        startDate: '',
+        finishDate: '',
+        isPresent: false,
         imageFile: null,
         imageUrl: ''
       });
@@ -117,6 +126,9 @@ const PortfolioManager = () => {
       demoUrl: project.demoUrl || '',
       githubUrl: project.githubUrl || '',
       imageFile: null,
+      startDate: project.startDate,
+      finishDate: project.finishDate,
+      isPresent: project.isPresent,
       imageUrl: project.imageUrl
     });
   };
@@ -200,6 +212,39 @@ const PortfolioManager = () => {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700">Start Date</label>
+              <input
+                type="date"
+                value={formData.startDate}
+                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Finish Date</label>
+              <input
+                type="date"
+                value={formData.finishDate}
+                onChange={(e) => setFormData({ ...formData, finishDate: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                required
+                disabled={formData.isPresent}
+              />
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.isPresent}
+                onChange={(e) => setFormData({ ...formData, isPresent: e.target.checked })}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label className="ml-2 text-sm text-gray-700">Currently working on this project</label>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700">Demo URL</label>
               <input
                 type="url"
@@ -242,6 +287,9 @@ const PortfolioManager = () => {
                     technologies: '',
                     demoUrl: '',
                     githubUrl: '',
+                    startDate: '',
+                    finishDate: '',
+                    isPresent: false,
                     imageFile: null,
                     imageUrl: ''
                   });
@@ -303,9 +351,9 @@ const PortfolioManager = () => {
 
 
             <div className="flex flex-wrap gap-2 mb-4">
-              {project.technologies.map((tech) => (
+              {project.technologies.map((tech, index) => (
                 <span
-                  key={tech}
+                  key={`${tech}-${index}`}
                   className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
                 >
                   {tech}

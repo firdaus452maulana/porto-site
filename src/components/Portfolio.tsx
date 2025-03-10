@@ -6,7 +6,7 @@ import { lazyload } from '@cloudinary/react';
 import cld from '../lib/cloudinary';
 import { ExternalLink, Github, Search } from 'lucide-react';
 import { Project } from '../types';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 const Portfolio = () => {
@@ -16,7 +16,7 @@ const Portfolio = () => {
 
   useEffect(() => {
     setLoading(true);
-    const q = query(collection(db, 'projects'));
+    const q = query(collection(db, 'projects'), orderBy('isPresent', 'desc'), orderBy('finishDate', 'desc'));
 
     const unsubscribe = onSnapshot(q,
       (snapshot) => {

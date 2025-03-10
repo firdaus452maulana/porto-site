@@ -4,6 +4,9 @@ export interface Project {
   description: string;
   technologies: string[];
   imageUrl: string;
+  startDate: string;
+  finishDate: string;
+  isPresent: boolean;
   demoUrl?: string;
   githubUrl?: string;
 }
